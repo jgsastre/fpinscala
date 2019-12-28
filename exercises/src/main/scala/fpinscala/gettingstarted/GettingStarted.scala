@@ -1,5 +1,7 @@
 package fpinscala.gettingstarted
 
+import scala.annotation.tailrec
+
 // A comment!
 /* Another comment */
 /** A documentation comment */
@@ -150,7 +152,16 @@ object PolymorphicFunctions {
 
   // Exercise 2: Implement a polymorphic function to check whether
   // an `Array[A]` is sorted
-  def isSorted[A](as: Array[A], gt: (A, A) => Boolean): Boolean = ???
+  def isSorted[A](as: Array[A], gt: (A, A) => Boolean): Boolean = {
+
+    @annotation.tailrec
+    def go(index: Int): Boolean =
+      if (index > as.size - 2) true
+      else if (!gt(as(index), as(index + 1))) false
+      else go(index + 1)
+
+    go(0)
+  }
 
   // Polymorphic functions are often so constrained by their type
   // that they only have one implementation! Here's an example:
@@ -185,4 +196,26 @@ object PolymorphicFunctions {
 
   def compose[A, B, C](f: B => C, g: A => B): A => C =
     ???
+
+  def main(args: Array[String]): Unit = {
+
+    def testOrder[A](array: Array[A], f: (A, A) => Boolean, expected: Boolean) =
+      println(s"isSorted (${array
+        .mkString(", ")}) ? Expected: $expected, Actual: ${isSorted(array, f)}")
+
+    testOrder(Array(), (a: Int, b: Int) => a < b, true)
+    testOrder(Array(1), (a: Int, b: Int) => a < b, true)
+    testOrder(Array(1, 2, 3, 4), (a: Int, b: Int) => a < b, true)
+    testOrder(Array(1, 2, 3, 1), (a: Int, b: Int) => a < b, false)
+    testOrder(
+      Array("alpha", "bravo", "charlie"),
+      (a: String, b: String) => a < b,
+      true
+    )
+    testOrder(
+      Array("alpha", "bravo", "alpha"),
+      (a: String, b: String) => a < b,
+      false
+    )
+  }
 }
