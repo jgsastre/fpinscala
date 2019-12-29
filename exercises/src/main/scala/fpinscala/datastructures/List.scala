@@ -51,7 +51,10 @@ object List { // `List` companion object. Contains functions for creating and wo
   def product2(ns: List[Double]) =
     foldRight(ns, 1.0)(_ * _) // `_ * _` is more concise notation for `(x,y) => x * y`; see sidebar
 
-  def tail[A](l: List[A]): List[A] = ???
+  def tail[A](l: List[A]): List[A] = l match {
+    case Nil           => sys.error("tail of empty list")
+    case Cons(_, tail) => tail
+  }
 
   def setHead[A](l: List[A], h: A): List[A] = ???
 
@@ -75,5 +78,19 @@ object Exercise31 {
 
     println(s"The value of x if $List.x")
   }
+}
 
+object Exercise32 {
+
+  def main(args: Array[String]): Unit = {
+
+    def tailTest[A](l: List[A], expected: List[A]) = {
+      println(
+        s"For list $l its tail is ${List.tail(l)} and expected ${expected}"
+      )
+    }
+
+    tailTest(List("1", "2", "3"), List("2", "3"))
+    tailTest(List(1, 2, 3, 4), List(2, 3, 4))
+  }
 }
