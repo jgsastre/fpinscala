@@ -80,7 +80,8 @@ object List { // `List` companion object. Contains functions for creating and wo
     case Cons(x, tail) => Cons(x, init(tail))
   }
 
-  def length[A](l: List[A]): Int = ???
+  def length[A](l: List[A]): Int =
+    foldRight(l, 0)((_, acc) => acc + 1)
 
   def foldLeft[A, B](l: List[A], z: B)(f: (B, A) => B): B = ???
 
@@ -141,5 +142,21 @@ object Exercise35 {
     dropWhileTest(List(1, 2, 3, 4), (x: Int) => x < 4, List(4))
     dropWhileTest(List(1, 2, 3, 4), (x: Int) => x < 2, List(2, 3, 4))
     dropWhileTest(List(1, 2, 3, 4), (x: Int) => x < 5, Nil)
+  }
+}
+
+object Exercise39 {
+
+  def main(args: Array[String]): Unit = {
+
+    def lengthTest[A](l: List[A], expected: Int) = {
+      println(
+        s"For list $l the actual length is ${List.length(l)} and expected ${expected}"
+      )
+    }
+
+    lengthTest(List(1, 2, 3, 4), 4)
+    lengthTest(List(1, 2, 3), 3)
+    lengthTest(Nil, 0)
   }
 }
