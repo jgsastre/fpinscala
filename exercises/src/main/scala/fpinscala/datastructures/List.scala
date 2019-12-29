@@ -1,5 +1,7 @@
 package fpinscala.datastructures
 
+import scala.annotation.tailrec
+
 sealed trait List[+A] // `List` data type, parameterized on a type, `A`
 case object Nil extends List[Nothing] // A `List` data constructor representing the empty list
 /* Another data constructor, representing nonempty lists. Note that `tail` is another `List[A]`,
@@ -83,7 +85,11 @@ object List { // `List` companion object. Contains functions for creating and wo
   def length[A](l: List[A]): Int =
     foldRight(l, 0)((_, acc) => acc + 1)
 
-  def foldLeft[A, B](l: List[A], z: B)(f: (B, A) => B): B = ???
+  @tailrec
+  def foldLeft[A, B](l: List[A], z: B)(f: (B, A) => B): B = l match {
+    case Nil           => z
+    case Cons(x, tail) => foldLeft(tail, f(z, x))(f)
+  }
 
   def map[A, B](l: List[A])(f: A => B): List[B] = ???
 }
@@ -158,5 +164,33 @@ object Exercise39 {
     lengthTest(List(1, 2, 3, 4), 4)
     lengthTest(List(1, 2, 3), 3)
     lengthTest(Nil, 0)
+  }
+}
+
+object Exercise310 {
+
+  def main(args: Array[String]): Unit = {
+
+    def foldLeftTest[A, B](l: List[A], z: B, f: (B, A) => B, expected: B) = {
+      println(
+        s"For list $l folding left result is ${List.foldLeft(l, z)(f)} and expected ${expected}"
+      )
+    }
+
+    foldLeftTest(List(1, 2, 3, 4), 0, (acc: Int, x: Int) => acc + x, 10)
+    foldLeftTest(Nil, 10, (acc: Int, x: Int) => acc + x, 10)
+    foldLeftTest(
+      List("1", "2", "3"),
+      "",
+      (acc: String, x: String) => acc + x,
+      "123"
+    )
+    foldLeftTest(
+      List(1, 2, 3, 4),
+      "",
+      (acc: String, x: Int) => acc + x.toString,
+      "1234"
+    )
+
   }
 }
