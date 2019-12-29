@@ -61,7 +61,13 @@ object List { // `List` companion object. Contains functions for creating and wo
     case Cons(_, tail) => Cons(h, tail)
   }
 
-  def drop[A](l: List[A], n: Int): List[A] = ???
+  def drop[A](l: List[A], n: Int): List[A] =
+    if (n == 0) l
+    else
+      l match {
+        case Nil           => Nil
+        case Cons(x, tail) => drop(tail, n - 1)
+      }
 
   def dropWhile[A](l: List[A], f: A => Boolean): List[A] = ???
 
@@ -95,5 +101,22 @@ object Exercise32 {
 
     tailTest(List("1", "2", "3"), List("2", "3"))
     tailTest(List(1, 2, 3, 4), List(2, 3, 4))
+  }
+}
+
+object Exercise34 {
+
+  def main(args: Array[String]): Unit = {
+
+    def dropTest[A](l: List[A], n: Int, expected: List[A]) = {
+      println(
+        s"For list $l dropping $n leaves ${List.drop(l, n)} and expected ${expected}"
+      )
+    }
+
+    dropTest(List("1", "2", "3"), 1, List("2", "3"))
+    dropTest(List("1", "2", "3"), 2, List("3"))
+    dropTest(List("1", "2", "3"), 3, Nil)
+    dropTest(List(1, 2, 3, 4), 3, List(4))
   }
 }
