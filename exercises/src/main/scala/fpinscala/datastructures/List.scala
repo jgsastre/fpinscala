@@ -103,6 +103,18 @@ object List { // `List` companion object. Contains functions for creating and wo
     foldLeft(l, 0)((acc, _) => acc + 1)
   }
 
+  def reverse[A](l: List[A]): List[A] =
+    foldLeft(l, Nil: List[A])((acc, x) => Cons(x, acc))
+
+  def reverse2[A](l: List[A]): List[A] = {
+    @tailrec
+    def go(list: List[A], acc: List[A]): List[A] = list match {
+      case Nil           => acc
+      case Cons(x, tail) => go(tail, Cons(x, acc))
+    }
+    go(l, Nil)
+  }
+
   def map[A, B](l: List[A])(f: A => B): List[B] = ???
 }
 
@@ -204,5 +216,21 @@ object Exercise310 {
       "1234"
     )
 
+  }
+}
+
+object Exercise311 {
+
+  def main(args: Array[String]): Unit = {
+
+    def reverseTest[A](l: List[A], expected: List[A]) = {
+      println(
+        s"For list $l reverse result is ${List.reverse(l)} and expected ${expected}"
+      )
+    }
+
+    reverseTest(List(1, 2, 3, 4), List(4, 3, 2, 1))
+    reverseTest(List(1), List(1))
+    reverseTest(Nil, Nil)
   }
 }
