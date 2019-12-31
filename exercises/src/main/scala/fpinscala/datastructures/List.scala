@@ -115,6 +115,15 @@ object List { // `List` companion object. Contains functions for creating and wo
     go(l, Nil)
   }
 
+  def foldRight2[A, B](l: List[A], z: B)(f: (A, B) => B): B =
+    foldLeft(reverse(l), z)((x, y) => f(y, x))
+
+  def foldRight3[A, B](l: List[A], z: B)(f: (A, B) => B): B =
+    foldLeft(l, Predef.identity[B] _)((acc, a) => (x: B) => acc(f(a, x)))(z)
+
+  def foldLeft2[A, B](l: List[A], z: B)(f: (B, A) => B): B =
+    foldRight(l, Predef.identity[B] _)((a, acc) => (x: B) => acc(f(x, a)))(z)
+
   def map[A, B](l: List[A])(f: A => B): List[B] = ???
 }
 
@@ -232,5 +241,54 @@ object Exercise311 {
     reverseTest(List(1, 2, 3, 4), List(4, 3, 2, 1))
     reverseTest(List(1), List(1))
     reverseTest(Nil, Nil)
+  }
+}
+
+object Exercise312 {
+
+  def main(args: Array[String]): Unit = {
+
+    def foldLeftTest2[A, B](l: List[A], z: B, f: (B, A) => B, expected: B) = {
+      println(
+        s"For list $l folding left result is ${List.foldLeft2(l, z)(f)} and expected ${expected}"
+      )
+    }
+
+    def foldRightTest3[A, B](l: List[A], z: B, f: (A, B) => B, expected: B) = {
+      println(
+        s"For list $l folding right result is ${List.foldRight3(l, z)(f)} and expected ${expected}"
+      )
+    }
+
+    foldLeftTest2(List(1, 2, 3, 4), 0, (acc: Int, x: Int) => acc + x, 10)
+    foldLeftTest2(Nil, 10, (acc: Int, x: Int) => acc + x, 10)
+    foldLeftTest2(
+      List("1", "2", "3"),
+      "",
+      (acc: String, x: String) => acc + x,
+      "123"
+    )
+    foldLeftTest2(
+      List(1, 2, 3, 4),
+      "",
+      (acc: String, x: Int) => acc + x.toString,
+      "1234"
+    )
+
+    foldRightTest3(List(1, 2, 3, 4), 0, (x: Int, acc: Int) => acc + x, 10)
+    foldRightTest3(Nil, 10, (x: Int, acc: Int) => acc + x, 10)
+    foldRightTest3(
+      List("1", "2", "3"),
+      "",
+      (x: String, acc: String) => acc + x,
+      "321"
+    )
+    foldRightTest3(
+      List(1, 2, 3, 4),
+      "",
+      (x: Int, acc: String) => acc + x.toString,
+      "4321"
+    )
+
   }
 }
