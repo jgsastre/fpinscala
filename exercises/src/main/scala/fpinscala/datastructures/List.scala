@@ -143,6 +143,8 @@ object List { // `List` companion object. Contains functions for creating and wo
   def mkString[A](l: List[A], sep: String): String =
     foldLeft(l, "(")(_ + _ + sep).dropRight(sep.length) + ")"
 
+  def add1(l: List[Int]): List[Int] =
+    foldRight(l, Nil: List[Int])((a, acc) => Cons(a + 1, acc))
 }
 
 object Exercise31 {
