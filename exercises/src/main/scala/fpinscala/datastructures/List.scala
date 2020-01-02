@@ -145,6 +145,9 @@ object List { // `List` companion object. Contains functions for creating and wo
 
   def add1(l: List[Int]): List[Int] =
     foldRight(l, Nil: List[Int])((a, acc) => Cons(a + 1, acc))
+
+  def doubleToString(l: List[Double]): List[String] =
+    foldRight(l, Nil: List[String])((a, acc) => Cons(a.toString, acc))
 }
 
 object Exercise31 {
