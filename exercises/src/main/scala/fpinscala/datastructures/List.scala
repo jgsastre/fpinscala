@@ -155,6 +155,8 @@ object List { // `List` companion object. Contains functions for creating and wo
   def map2[A, B](l: List[A])(f: A => B): List[B] =
     foldRight(l, Nil: List[B])((x, acc) => Cons(f(x), acc))
 
+  def filter[A](l: List[A])(f: A => Boolean): List[A] =
+    foldRight(l, Nil: List[A])((a, acc) => if (f(a)) Cons(a, acc) else acc)
 }
 
 object Exercise31 {
@@ -358,5 +360,29 @@ object Exercise315 {
       List(1, 2, 3, 4, 5, 6)
     )
 
+  }
+}
+
+object Exercise319 {
+
+  def main(args: Array[String]): Unit = {
+
+    def testFilter[A](l: List[A], f: A => Boolean, expected: List[A]) = {
+      val inputString = List.mkString(l, ", ")
+      println(
+        s"For list $inputString filter result is ${List
+          .mkString(List.filter(l)(f), ", ")} " +
+          s"and expected ${List.mkString(expected, ", ")}"
+      )
+    }
+
+    testFilter(List(1, 2, 3, 4, 5, 6), (x: Int) => x % 2 == 0, List(2, 4, 6))
+    testFilter(
+      List(1, 2, 3, 4, 5, 6),
+      (x: Int) => x < 20,
+      List(1, 2, 3, 4, 5, 6)
+    )
+    testFilter(List(1, 2, 3, 4, 5, 6), (x: Int) => x > 20, Nil)
+    testFilter(Nil, (x: Int) => true, Nil)
   }
 }
