@@ -127,8 +127,6 @@ object List { // `List` companion object. Contains functions for creating and wo
   def append2[A](a1: List[A], a2: List[A]): List[A] =
     foldRight(a1, a2)(Cons.apply)
 
-  def map[A, B](l: List[A])(f: A => B): List[B] = ???
-
   def flatten[A](l: List[List[A]]): List[A] = l match {
     case Nil                      => Nil
     case Cons(Nil, Cons(a2, Nil)) => a2
@@ -148,6 +146,15 @@ object List { // `List` companion object. Contains functions for creating and wo
 
   def doubleToString(l: List[Double]): List[String] =
     foldRight(l, Nil: List[String])((a, acc) => Cons(a.toString, acc))
+
+  def map[A, B](l: List[A])(f: A => B): List[B] = l match {
+    case Nil           => Nil
+    case Cons(x, tail) => Cons(f(x), map(tail)(f))
+  }
+
+  def map2[A, B](l: List[A])(f: A => B): List[B] =
+    foldRight(l, Nil: List[B])((x, acc) => Cons(f(x), acc))
+
 }
 
 object Exercise31 {
