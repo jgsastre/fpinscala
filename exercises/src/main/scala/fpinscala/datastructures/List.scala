@@ -124,6 +124,9 @@ object List { // `List` companion object. Contains functions for creating and wo
   def foldLeft2[A, B](l: List[A], z: B)(f: (B, A) => B): B =
     foldRight(l, Predef.identity[B] _)((a, acc) => (x: B) => acc(f(x, a)))(z)
 
+  def append2[A](a1: List[A], a2: List[A]): List[A] =
+    foldRight(a1, a2)(Cons.apply)
+
   def map[A, B](l: List[A])(f: A => B): List[B] = ???
 }
 
@@ -290,5 +293,22 @@ object Exercise312 {
       "4321"
     )
 
+  }
+}
+
+object Exercise314 {
+
+  def main(args: Array[String]): Unit = {
+
+    def appendTest[A](l: List[A], l2: List[A], expected: List[A]) = {
+      println(
+        s"For list $l and $l2 append result is ${List.append2(l, l2)} and expected ${expected}"
+      )
+    }
+
+    appendTest(List(1, 2, 3, 4), List(5, 6, 7, 8), List(1, 2, 3, 4, 5, 6, 7, 8))
+    appendTest(List(1, 2, 3, 4), Nil, List(1, 2, 3, 4))
+    appendTest(Nil, List(1, 2, 3, 4), List(1, 2, 3, 4))
+    appendTest(Nil, Nil, Nil)
   }
 }
