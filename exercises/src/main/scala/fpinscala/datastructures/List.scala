@@ -128,6 +128,21 @@ object List { // `List` companion object. Contains functions for creating and wo
     foldRight(a1, a2)(Cons.apply)
 
   def map[A, B](l: List[A])(f: A => B): List[B] = ???
+
+  def flatten[A](l: List[List[A]]): List[A] = l match {
+    case Nil                      => Nil
+    case Cons(Nil, Cons(a2, Nil)) => a2
+    case Cons(Cons(head, tail), Cons(a2, Nil)) =>
+      Cons(head, flatten(List[List[A]](tail, a2)))
+    case Cons(x, tail) => flatten(List[List[A]](x, flatten(tail)))
+  }
+
+  def flatten2[A](l: List[List[A]]): List[A] =
+    foldRight(l, Nil: List[A])(append)
+
+  def mkString[A](l: List[A], sep: String): String =
+    foldLeft(l, "(")(_ + _ + sep).dropRight(sep.length) + ")"
+
 }
 
 object Exercise31 {
@@ -310,5 +325,26 @@ object Exercise314 {
     appendTest(List(1, 2, 3, 4), Nil, List(1, 2, 3, 4))
     appendTest(Nil, List(1, 2, 3, 4), List(1, 2, 3, 4))
     appendTest(Nil, Nil, Nil)
+  }
+}
+
+object Exercise315 {
+
+  def main(args: Array[String]): Unit = {
+
+    def testFlatten[A](l: List[List[A]], expected: List[A]) = {
+      val inputString = List.mkString(List.map(l)(List.mkString(_, ", ")), ", ")
+      println(
+        s"For list $inputString flatten result is ${List
+          .mkString(List.flatten2(l), ", ")} " +
+          s"and expected ${List.mkString(expected, ", ")}"
+      )
+    }
+
+    testFlatten(
+      List(List(1, 2), List(3, 4), List(5), Nil, List(6), Nil),
+      List(1, 2, 3, 4, 5, 6)
+    )
+
   }
 }
