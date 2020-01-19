@@ -170,6 +170,14 @@ object List { // `List` companion object. Contains functions for creating and wo
     case (Cons(x, tailX), Cons(y, tailY)) =>
       Cons(x + y, addPairwise(tailX, tailY))
   }
+
+  def zipWith[A, B, C](a: List[A], b: List[B])(f: (A, B) => C): List[C] =
+    (a, b) match {
+      case (Nil, _) => Nil
+      case (_, Nil) => Nil
+      case (Cons(x, tailX), Cons(y, tailY)) =>
+        Cons(f(x, y), zipWith(tailX, tailY)(f))
+    }
 }
 
 object Exercise31 {
@@ -425,5 +433,30 @@ object Exercise322 {
       List(1, 2, 3, 4, 5),
       List(2, 4, 6, 8, 10)
     )
+  }
+}
+
+object Exercise323 {
+
+  def main(args: Array[String]): Unit = {
+
+    def testZipWith[A, B, C](a: List[A],
+                             b: List[B])(f: (A, B) => C)(expected: List[C]) = {
+      val inputString1 = List.mkString(a, ", ")
+      val inputString2 = List.mkString(b, ", ")
+      println(
+        s"For list $inputString1 and $inputString2 zipWith result is ${List
+          .mkString(List.zipWith(a, b)(f), ", ")} " +
+          s"and expected ${List.mkString(expected, ", ")}"
+      )
+    }
+
+    testZipWith(List(1, 2, 3, 4, 5, 6), List(1, 2, 3, 4, 5, 6))(
+      (a: Int, b: Int) => a + b
+    )(List(2, 4, 6, 8, 10, 12))
+    testZipWith(Nil, Nil)((a: Int, b: Int) => a + b)(Nil)
+    testZipWith(List(1, 2, 3, 4), List("a", "b", "c"))(
+      (a: Int, b: String) => a.toString + b
+    )(List("1a", "2b", "3c"))
   }
 }
