@@ -178,6 +178,36 @@ object List { // `List` companion object. Contains functions for creating and wo
       case (Cons(x, tailX), Cons(y, tailY)) =>
         Cons(f(x, y), zipWith(tailX, tailY)(f))
     }
+
+  def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean = {
+
+    def go[A](a: List[A], b: List[A], failBack: => List[A]): Boolean =
+      (a, b) match {
+        case (_, Nil) => true
+        case (Nil, _) => false
+        case (Cons(x, tailA), Cons(y, tailB)) =>
+          if (x == y) go(tailA, tailB, failBack)
+          else go(failBack, sub, List.tail(failBack))
+      }
+
+    go(sup, sub, List.tail(sup))
+  }
+
+  @tailrec
+  def startsWith[A](l: List[A], prefix: List[A]): Boolean = (l, prefix) match {
+    case (_, Nil) => true
+    case (Cons(a, tailA), Cons(b, tailB)) if (a == b) =>
+      startsWith(tailA, tailB)
+    case _ => false
+  }
+
+  @tailrec
+  def hasSubsequence2[A](sup: List[A], sub: List[A]): Boolean =
+    sup match {
+      case Nil                            => sub == Nil
+      case _ if List.startsWith(sup, sub) => true
+      case Cons(_, tail)                  => hasSubsequence2(tail, sub)
+    }
 }
 
 object Exercise31 {
@@ -458,5 +488,32 @@ object Exercise323 {
     testZipWith(List(1, 2, 3, 4), List("a", "b", "c"))(
       (a: Int, b: String) => a.toString + b
     )(List("1a", "2b", "3c"))
+  }
+}
+
+object Exercise324 {
+
+  def main(args: Array[String]): Unit = {
+
+    def testHasSubsequence[A](a: List[A], b: List[A], expected: Boolean) = {
+      val inputString1 = List.mkString(a, ", ")
+      val inputString2 = List.mkString(b, ", ")
+      println(
+        s"For list $inputString1 and $inputString2 hasSubsequence result is ${List
+          .hasSubsequence2(a, b)} " +
+          s"and expected $expected"
+      )
+    }
+
+    testHasSubsequence(List(1, 2, 3, 4, 5, 6), List(1, 2, 3, 4, 5, 6), true)
+    testHasSubsequence(List(1, 2, 3, 4, 5, 6), List(1, 2, 3), true)
+    testHasSubsequence(List(1, 2, 3, 4, 5, 6), List(4, 5, 6), true)
+    testHasSubsequence(List(1, 2, 3, 4, 5, 6), List(4, 5), true)
+    testHasSubsequence(List(1, 2, 3, 4, 5, 6), List(6), true)
+    testHasSubsequence(List(1, 2, 3, 4, 5, 6), List(1), true)
+    testHasSubsequence(List(1, 2, 3, 4, 5, 6), Nil, true)
+    testHasSubsequence(List(1, 2, 3, 4, 5, 6), List(2, 4), false)
+    testHasSubsequence(List(1, 2, 3, 4, 5, 6), List(5), true)
+    testHasSubsequence(Nil, List(4, 5, 6), false)
   }
 }
