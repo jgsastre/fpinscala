@@ -163,6 +163,13 @@ object List { // `List` companion object. Contains functions for creating and wo
 
   def filterViaflatMap[A](l: List[A])(f: A => Boolean): List[A] =
     flatMap(l)(x => if (f(x)) List(x) else Nil)
+
+  def addPairwise(a: List[Int], b: List[Int]): List[Int] = (a, b) match {
+    case (Nil, _) => Nil
+    case (_, Nil) => Nil
+    case (Cons(x, tailX), Cons(y, tailY)) =>
+      Cons(x + y, addPairwise(tailX, tailY))
+  }
 }
 
 object Exercise31 {
@@ -390,5 +397,33 @@ object Exercise319 {
     )
     testFilter(List(1, 2, 3, 4, 5, 6), (x: Int) => x > 20, Nil)
     testFilter(Nil, (x: Int) => true, Nil)
+  }
+}
+
+object Exercise322 {
+
+  def main(args: Array[String]): Unit = {
+
+    def testAddPairwise(a: List[Int], b: List[Int], expected: List[Int]) = {
+      val inputString1 = List.mkString(a, ", ")
+      val inputString2 = List.mkString(b, ", ")
+      println(
+        s"For list $inputString1 and $inputString2 addPairwise result is ${List
+          .mkString(List.addPairwise(a, b), ", ")} " +
+          s"and expected ${List.mkString(expected, ", ")}"
+      )
+    }
+
+    testAddPairwise(
+      List(1, 2, 3, 4, 5, 6),
+      List(1, 2, 3, 4, 5, 6),
+      List(2, 4, 6, 8, 10, 12)
+    )
+    testAddPairwise(Nil, Nil, Nil)
+    testAddPairwise(
+      List(1, 2, 3, 4, 5, 6),
+      List(1, 2, 3, 4, 5),
+      List(2, 4, 6, 8, 10)
+    )
   }
 }
